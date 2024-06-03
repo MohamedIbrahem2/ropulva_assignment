@@ -1,0 +1,9 @@
+import 'package:flutter/material.dart';
+ class MyColors {
+   static const Color filterColorClicked = Color(0x0000ca5d);
+   static const Color closeButtonColor = Color(0x00f24e1e);
+   static const Color checkBoxBackgroundColor = Color(0x0004ecb7);
+   static const Color checkBoxColor = Color(0x0004ecb7);
+   static const Color textFieldBackgroundColor = Color(0x00d9d9d9);
+   static const Color textFieldColor = Color(0x00000000);
+ }

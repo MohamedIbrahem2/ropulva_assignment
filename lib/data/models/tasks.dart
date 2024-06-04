@@ -1,22 +1,26 @@
-class Todo {
+class Tasks {
   String id;
   String title;
   bool completed;
+  DateTime dueDate;
 
-  Todo({
+  Tasks({
     required this.id,
     required this.title,
     required this.completed,
+    required this.dueDate
   });
 
 
-  Todo copyWith({
+  Tasks copyWith({
     String? id,
     String? title,
     bool? completed,
+    DateTime? dueDate
   }) {
-    return Todo(
+    return Tasks(
       id: id ?? this.id,
+      dueDate: dueDate ?? this.dueDate,
       title: title ?? this.title,
       completed: completed ?? this.completed,
     );

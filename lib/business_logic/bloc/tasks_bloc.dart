@@ -7,47 +7,47 @@ import '../../data/firestore_services/tasks_firestore_services.dart';
 part 'tasks_event.dart';
 part 'tasks_state.dart';
 
-class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  final FirestoreService _firestoreService;
+class TaskBloc extends Bloc<TaskEvent, TaskState> {
+  final FireStoreService fireStoreService;
 
-  TodoBloc(this._firestoreService) : super(TodoInitial()) {
-    on<LoadTodos>((event, emit) async {
+  TaskBloc(this.fireStoreService) : super(TaskInitial()) {
+    on<LoadTasks>((event, emit) async {
       try {
-        emit(TodoLoading());
-        final todos = await _firestoreService.getTodos().first;
-        emit(TodoLoaded(todos));
+        emit(TaskLoading());
+        final tasks = await fireStoreService.getTasks().first;
+        emit(TaskLoaded(tasks));
       } catch (e) {
-        emit(TodoError('Failed to load todos.'));
+        emit(TaskError('Failed to load tasks.'));
       }
     });
 
-    on<AddTodo>((event, emit) async {
+    on<AddTask>((event, emit) async {
       try {
-        emit(TodoLoading());
-        await _firestoreService.addTodo(event.todo);
-        emit(TodoOperationSuccess('Todo added successfully.'));
+        emit(TaskLoading());
+        await fireStoreService.addTask(event.task);
+        emit(TaskOperationSuccess('Task added successfully.'));
       } catch (e) {
-        emit(TodoError('Failed to add todo.'));
+        emit(TaskError('Failed to add task.'));
       }
     });
 
-    on<UpdateTodo>((event, emit)  async {
+    on<UpdateTask>((event, emit)  async {
       try {
-        emit(TodoLoading());
-        await _firestoreService.updateTodo(event.todo);
-        emit(TodoOperationSuccess('Todo updated successfully.'));
+        emit(TaskLoading());
+        await fireStoreService.updateTask(event.task);
+        emit(TaskOperationSuccess('Task updated successfully.'));
       } catch (e) {
-        emit(TodoError('Failed to update todo.'));
+        emit(TaskError('Failed to update task.'));
       }
     });
 
-    on<DeleteTodo>((event, emit) async {
+    on<DeleteTask>((event, emit) async {
       try {
-        emit(TodoLoading());
-        await _firestoreService.deleteTodo(event.todoId);
-        emit(TodoOperationSuccess('Todo deleted successfully.'));
+        emit(TaskLoading());
+        await fireStoreService.deleteTask(event.taskId);
+        emit(TaskOperationSuccess('Task deleted successfully.'));
       } catch (e) {
-        emit(TodoError('Failed to delete todo.'));
+        emit(TaskError('Failed to delete task.'));
       }
     });
 

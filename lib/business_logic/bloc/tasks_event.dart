@@ -1,23 +1,23 @@
 part of 'tasks_bloc.dart';
 
 @immutable
-sealed class TodoEvent {}
-class LoadTodos extends TodoEvent {}
+sealed class TaskEvent {}
+class LoadTasks extends TaskEvent {}
 
-class AddTodo extends TodoEvent {
-  final Todo todo;
+class AddTask extends TaskEvent {
+  final Tasks task;
 
-  AddTodo(this.todo);
+  AddTask(this.task);
 }
 
-class UpdateTodo extends TodoEvent {
-  final Todo todo;
+class UpdateTask extends TaskEvent {
+  final Tasks task;
 
-  UpdateTodo(this.todo);
+  UpdateTask(this.task);
 }
 
-class DeleteTodo extends TodoEvent {
-  final String todoId;
+class DeleteTask extends TaskEvent {
+  final String taskId;
 
-  DeleteTodo(this.todoId);
+  DeleteTask(this.taskId);
 }

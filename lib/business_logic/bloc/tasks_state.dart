@@ -1,26 +1,26 @@
 part of 'tasks_bloc.dart';
 
 @immutable
-sealed class TodoState {}
+sealed class TaskState {}
 
-class TodoInitial extends TodoState {}
+class TaskInitial extends TaskState {}
 
-class TodoLoading extends TodoState {}
+class TaskLoading extends TaskState {}
 
-class TodoLoaded extends TodoState {
-  final List<Todo> todos;
+class TaskLoaded extends TaskState {
+  final List<Tasks> tasks;
 
-  TodoLoaded(this.todos);
+  TaskLoaded(this.tasks);
 }
 
-class TodoOperationSuccess extends TodoState {
+class TaskOperationSuccess extends TaskState {
   final String message;
 
-  TodoOperationSuccess(this.message);
+  TaskOperationSuccess(this.message);
 }
 
-class TodoError extends TodoState {
+class TaskError extends TaskState {
   final String errorMessage;
 
-  TodoError(this.errorMessage);
+  TaskError(this.errorMessage);
 }

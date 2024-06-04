@@ -25,7 +25,7 @@ class TaskApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TodoBloc(FirestoreService()),
+      create: (context) => TaskBloc(FireStoreService()),
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         home:  HomeScreen(),

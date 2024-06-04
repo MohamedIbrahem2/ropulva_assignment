@@ -1,12 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ropulva_assignment/business_logic/bloc/tasks_bloc.dart';
 import 'package:ropulva_assignment/constants/my_colors.dart';
-
 import '../../data/models/tasks.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -117,8 +113,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 trailing: Transform.scale(
                                   scale: 2.0,
                                   child: Checkbox(
+                                    activeColor: MyColors.filterColorClicked,
+                                    checkColor: MyColors.filterColorClicked,
                                     value: task.completed,
-                                    fillColor: MaterialStatePropertyAll(MyColors.filterColorClicked.withOpacity(0.20)),
+                                    fillColor: MaterialStatePropertyAll(MyColors.filterColorClicked.withOpacity(0.10)),
                                     side: BorderSide.none,
                                     shape:  RoundedRectangleBorder(
                                        borderRadius: BorderRadius.circular(10),
@@ -134,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Text(task.title,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                                   ],
                                 ),
-                                subtitle: Text("Due Date: ${task.dueDate}"),
+                                subtitle: Text("Due Date: ${task.dueDate.toString().substring(0,10)}"),
                               ),
                             ),
                           );
@@ -177,36 +175,78 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   void _showAddTaskDialog(BuildContext context) {
     final titleController = TextEditingController();
-    showDialog(
+    final DueDateController = TextEditingController();
+    var size = MediaQuery
+        .of(context)
+        .size;
+    var height = size.height;
+    var width = size.width;
+    showBottomSheet(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const  Text('Add Task'),
-          content: TextField(
-            controller: titleController,
-            decoration: const InputDecoration(hintText: 'Task title'),
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                    blurRadius: 3
+                )
+              ],
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(15),topRight: Radius.circular(15))
+            ),
+            height: height * 0.3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                      onPressed: (){
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.close,
+                        color: MyColors.closeButtonColor,)),
+                ),
+                Text("Create New Task"),
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(hintText: 'Todo title'),
+                ),
+                TextField(
+                  controller: DueDateController,
+                  decoration: const InputDecoration(hintText: 'Todo title'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: width * 1,
+                    height: height * 0.070,
+                    child: ElevatedButton(
+                        onPressed: (){
+                          final task = Tasks(
+                            id: DateTime.now().toString(),
+                            title: titleController.text,
+                            dueDate: DateTime.now(),
+                            completed: false,
+                          );
+                          BlocProvider.of<TaskBloc>(context).add(AddTask(task));
+                          Navigator.pop(context);
+
+                        },
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            backgroundColor: MyColors.filterColorClicked
+                        ),
+                        child: const Text("Save Task",style: TextStyle(color: Colors.white,fontSize: 16),)),
+                  ),
+                )
+              ],
+            ),
           ),
-          actions: [
-            ElevatedButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            ElevatedButton(
-              child: const Text('Add'),
-              onPressed: () {
-                final task = Tasks(
-                  id: DateTime.now().toString(),
-                  title: titleController.text,
-                  dueDate: DateTime.now(),
-                  completed: false,
-                );
-                BlocProvider.of<TaskBloc>(context).add(AddTask(task));
-                Navigator.pop(context);
-              },
-            ),
-          ],
         );
       },
     );

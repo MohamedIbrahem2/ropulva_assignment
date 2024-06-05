@@ -2,10 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:io' show Platform;
-import 'package:ropulva_assignment/business_logic/bloc/tasks_bloc.dart';
 import 'package:ropulva_assignment/data/firestore_services/tasks_firestore_services.dart';
 import 'package:ropulva_assignment/presentation/screens/android_screen/android_home_screen.dart';
 import 'package:ropulva_assignment/presentation/screens/windows_screen/windows_home_screen.dart';
+
+import 'business_logic/bloc/tasks_bloc/tasks_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,16 +34,17 @@ class TaskApp extends StatefulWidget {
 class _TaskAppState extends State<TaskApp> {
   bool isAndroid = false;
   bool isWindows = false;
-  void checkPlatform(){
-    if(Platform.isAndroid){
+
+  void checkPlatform() {
+    if (Platform.isAndroid) {
       isAndroid = true;
-    }else if (Platform.isWindows){
+    } else if (Platform.isWindows) {
       isWindows = true;
     }
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     checkPlatform();
   }
@@ -50,11 +52,12 @@ class _TaskAppState extends State<TaskApp> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TaskBloc(FireStoreService()),
+          create: (context) => TaskBloc(FireStoreService()),
       child: MaterialApp(
-        //restorationScopeId: "desktop-version",
         debugShowCheckedModeBanner: false,
-        home:  isAndroid ? const AndroidScreen(): const WindowsScreen(),
+        home: Scaffold(
+          body: isAndroid ? const AndroidScreen() : const WindowsScreen(),
+        )
       ),
     );
   }

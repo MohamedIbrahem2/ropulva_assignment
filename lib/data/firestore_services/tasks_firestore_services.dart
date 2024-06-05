@@ -36,7 +36,7 @@ class FireStoreService {
     });
   }
 
-  Future<void> deleteTask(String taskId) {
-    return collection.doc(taskId).delete();
+  Future<void> deleteTask(Tasks task) {
+    return collection.doc(task.id).delete();
   }
 }

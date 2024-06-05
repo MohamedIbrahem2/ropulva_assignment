@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ropulva_assignment/business_logic/bloc/tasks_bloc.dart';
+import 'package:ropulva_assignment/business_logic/bloc/tasks_bloc/tasks_bloc.dart';
 import 'package:ropulva_assignment/constants/my_colors.dart';
 import '../../../data/models/tasks.dart';
 class WindowsScreen extends StatefulWidget {

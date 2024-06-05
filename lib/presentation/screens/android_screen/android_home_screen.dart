@@ -392,7 +392,6 @@ class _AndroidScreenState extends State<AndroidScreen> {
                               completed: false,
                             );
                             BlocProvider.of<TaskBloc>(context).add(AddTask(task));
-                            titleController.clear();
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(

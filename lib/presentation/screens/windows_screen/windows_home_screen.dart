@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:ropulva_assignment/business_logic/bloc/tasks_bloc/tasks_bloc.dart';
 import 'package:ropulva_assignment/constants/my_colors.dart';
 import '../../../data/models/tasks.dart';
@@ -14,6 +12,8 @@ class WindowsScreen extends StatefulWidget {
 }
 
 class _WindowsScreenState extends State<WindowsScreen> {
+  DateTime dueDate = DateTime.now();
+  final titleController = TextEditingController();
 
 
   @override
@@ -33,13 +33,7 @@ class _WindowsScreenState extends State<WindowsScreen> {
     var width = size.width;
     return Scaffold(
       appBar: null,
-      body:BlocBuilder<TaskBloc, TaskState>(
-        builder: (context, state) {
-          if (state is TaskLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is TaskLoaded) {
-            final tasks = state.tasks;
-            return SafeArea(
+      body: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -128,77 +122,179 @@ class _WindowsScreenState extends State<WindowsScreen> {
                       height: height * 0.05,
                     ),
                     Expanded(
-                      child: SizedBox(
-                        height: height * 0.5,
-                        width: width * 0.5,
-                        child: GridView.builder(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            childAspectRatio: 4,
-                              crossAxisCount: 2),
-                          itemCount: tasks.length,
-                          itemBuilder: (context, index) {
-                            final task = tasks[index];
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Card(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    ),
-                                elevation: 6,
-                                child: ListTile(
-                                  onTap: (){
-                                  },
-                                  trailing: Transform.scale(
-                                    scale: 2.0,
-                                    child: Checkbox(
-                                      activeColor: MyColors.filterColorClicked,
-                                      checkColor: MyColors.filterColorClicked,
-                                      value: task.completed,
-                                      fillColor: MaterialStatePropertyAll(MyColors.filterColorClicked.withOpacity(0.10)),
-                                      side: BorderSide.none,
-                                      shape:  RoundedRectangleBorder(
-                                         borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      onChanged: (value) {
-                                        final updatedTask = task.copyWith(completed: value);
-                                        taskBloc.add(UpdateTask(updatedTask));
-                                      },
-                                    ),
-                                  ),
-                                  title: Row(
-                                    children: [
-                                      Text(task.title,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                                    ],
-                                  ),
-                                  subtitle: Text("Due Date: ${task.dueDate.toString().substring(0,10)}"),
+                      child: BlocBuilder<TaskBloc,TaskState>(
+                        builder: (context, taskState) {
+                          if (taskState is TaskLoading) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          else if (taskState is TaskLoaded) {
+                            final tasks = taskState.tasks;
+                            return SizedBox(
+                              height: height * 0.5,
+                              width: width * 0.5,
+                              child: GridView.builder(
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    childAspectRatio: 3.6,
+                                    crossAxisCount: 2
                                 ),
+                                itemCount: tasks.length,
+                                itemBuilder: (context, index) {
+                                  final task = tasks[index];
+                                  String formattedDate = DateFormat.yMEd()
+                                      .format(task.dueDate);
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: InkWell(
+                                      onLongPress: (){
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return Center(
+                                              child: AlertDialog(
+                                                title: const Center(child:Text("Edit Task")),
+                                                actions: [
+                                                  ElevatedButton(
+                                                    child: const Text('Delete'),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                      taskBloc.add(DeleteTask(task));
+                                                    },
+                                                  ),
+                                                  ElevatedButton(
+                                                    child: const Text('Edit'),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return AlertDialog(
+                                                            title: const  Text('Update Task'),
+                                                            content: Column(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                TextField(
+                                                                  controller: titleController,
+                                                                  decoration: const InputDecoration(hintText: 'Task title'),
+                                                                ),
+                                                                TextField(
+                                                                  readOnly: true,
+                                                                  onTap: (){
+                                                                    _selectDate(context);
+                                                                  },
+                                                                  decoration: const InputDecoration(hintText: 'due date'),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            actions: [
+                                                              ElevatedButton(
+                                                                child: const Text('Cancel'),
+                                                                onPressed: () {
+                                                                  Navigator.pop(context);
+                                                                },
+                                                              ),
+                                                              ElevatedButton(
+                                                                child: const Text('Update'),
+                                                                onPressed: () {
+                                                                  final taskEdit = Tasks(
+                                                                    id: task.id,
+                                                                    title: titleController.text,
+                                                                    dueDate: dueDate,
+                                                                    completed: task.completed,
+                                                                  );
+                                                                  BlocProvider.of<TaskBloc>(context).add(UpdateTask(taskEdit));
+                                                                  titleController.clear();
+                                                                  dueDate = DateTime.now();
+                                                                  Navigator.pop(context);
+                                                                },
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+
+                                      },
+                                      child: Card(
+                                        color: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              15),
+                                        ),
+                                        elevation: 6,
+                                        child: ListTile(
+                                          onTap: () {},
+                                          trailing: Transform.scale(
+                                            scale: 2.0,
+                                            child: Checkbox(
+                                              activeColor: MyColors
+                                                  .filterColorClicked,
+                                              checkColor: MyColors
+                                                  .filterColorClicked,
+                                              value: task.completed,
+                                              fillColor: MaterialStatePropertyAll(
+                                                  MyColors.filterColorClicked
+                                                      .withOpacity(0.10)),
+                                              side: BorderSide.none,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius
+                                                    .circular(
+                                                    10),
+                                              ),
+                                              onChanged: (value) {
+                                                final updatedTask = task
+                                                    .copyWith(
+                                                    completed: value);
+                                                taskBloc.add(
+                                                    UpdateTask(updatedTask));
+                                              },
+                                            ),
+                                          ),
+                                          title: Row(
+                                            children: [
+                                              Text(task.title,
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight
+                                                        .bold),),
+                                            ],
+                                          ),
+                                          subtitle: Text(
+                                              "Due Date: $formattedDate"),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             );
-                          },
-                        ),
+                         }
+                          else if (taskState is TaskOperationSuccess) {
+                            taskBloc.add(LoadTasks()); // Reload tasks
+                            return Container(); // Or display a success message
+                          } else if (taskState is TaskError) {
+                            return Center(child: Text(taskState.errorMessage));
+                          } else {
+                            return Container();
+                          }
+                        }
                       ),
                     ),
 
                   ],
                 ),
               ),
-            );
-          } else if (state is TaskOperationSuccess) {
-            taskBloc.add(LoadTasks()); // Reload tasks
-            return Container(); // Or display a success message
-          } else if (state is TaskError) {
-            return Center(child: Text(state.errorMessage));
-          } else {
-            return Container();
-          }
-        },
-      ),
+            )
     );
   }
   void _showAddTaskDialog(BuildContext context) {
     final titleController = TextEditingController();
-    final DueDateController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) {
@@ -247,7 +343,10 @@ class _WindowsScreenState extends State<WindowsScreen> {
               child: SizedBox(
                 height: 50,
                 child: TextField(
-                  controller: DueDateController,
+                  readOnly: true,
+                  onTap: () {
+                    _selectDate(context);
+                  },
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide.none,
@@ -269,10 +368,11 @@ class _WindowsScreenState extends State<WindowsScreen> {
                       final task = Tasks(
                         id: DateTime.now().toString(),
                         title: titleController.text,
-                        dueDate: DateTime.now(),
+                        dueDate: dueDate,
                         completed: false,
                       );
                       BlocProvider.of<TaskBloc>(context).add(AddTask(task));
+                      dueDate = DateTime.now();
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
@@ -289,5 +389,17 @@ class _WindowsScreenState extends State<WindowsScreen> {
         );
       },
     );
+  }
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: dueDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != dueDate) {
+      setState(() {
+        dueDate = picked;
+      });
+    }
   }
 }

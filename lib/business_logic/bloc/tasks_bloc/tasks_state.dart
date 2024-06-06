@@ -1,5 +1,5 @@
 part of 'tasks_bloc.dart';
-
+// this page take state from backend and sen it ui.
 @immutable
 sealed class TaskState {
 

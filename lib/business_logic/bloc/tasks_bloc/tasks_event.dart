@@ -1,5 +1,5 @@
 part of 'tasks_bloc.dart';
-
+// this page take event from ui and send it to bloc to get data from backend.
 @immutable
 sealed class TaskEvent {
 }

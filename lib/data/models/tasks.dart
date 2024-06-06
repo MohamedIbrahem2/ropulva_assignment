@@ -1,4 +1,4 @@
-class Tasks {
+class Tasks {// model of tasks.
   String id;
   String title;
   bool completed;

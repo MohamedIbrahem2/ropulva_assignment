@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:ropulva_assignment/business_logic/bloc/tasks_bloc/tasks_bloc.dart';
 import 'package:ropulva_assignment/constants/my_colors.dart';
 import '../../../data/models/tasks.dart';
-import '../../../data/models/utils.dart';
 class AndroidScreen extends StatefulWidget {
   const AndroidScreen({super.key});
 
@@ -14,6 +13,7 @@ class AndroidScreen extends StatefulWidget {
 }
 
 class _AndroidScreenState extends State<AndroidScreen> {
+
    DateTime dueDate = DateTime.now();
    final titleController = TextEditingController();
   @override
@@ -23,11 +23,10 @@ class _AndroidScreenState extends State<AndroidScreen> {
 
   }
 
-
   @override
   Widget build(BuildContext context) {
+    // i know its not best ui clean code but i focus in bloc logic and back end.
     final TaskBloc taskBloc = BlocProvider.of<TaskBloc>(context);
-
     var size = MediaQuery
         .of(context)
         .size;
@@ -384,7 +383,7 @@ class _AndroidScreenState extends State<AndroidScreen> {
                       width: width * 1,
                       height: height * 0.070,
                       child: ElevatedButton(
-                          onPressed: (){
+                          onPressed: () {
                             final task = Tasks(
                               id: DateTime.now().toString(),
                               title: titleController.text,
